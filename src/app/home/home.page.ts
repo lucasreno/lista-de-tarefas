@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { Task } from '../interface/task';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -8,8 +9,8 @@ import { Storage } from '@ionic/storage-angular';
 })
 export class HomePage {
   novaTarefa: string;
-  tarefas: string[] = [];
-  tarefasBackup: string[] = [];
+  tarefas: Task[] = [];
+  tarefasBackup: Task[] = [];
 
   constructor(private storage: Storage, private toast: ToastController) { }
 
@@ -24,10 +25,16 @@ export class HomePage {
 
   async adicionarTarefa() {
     if (this.novaTarefa.trim().length > 0) {
-      this.tarefas.push(this.novaTarefa);
+      let task: Task = { nomeTarefa: this.novaTarefa, concluido: false };
+      this.tarefas.push(task);
       this.novaTarefa = null;
       await this.storage.set("listaTarefas", this.tarefas);
     }
+  }
+
+  async atualizarStatus(indice){
+    this.tarefas[indice].concluido = !this.tarefas[indice].concluido;
+    await this.storage.set("listaTarefas", this.tarefas);
   }
 
   async apagarTarefa(indice){
@@ -45,8 +52,9 @@ export class HomePage {
       position: 'bottom',
       buttons:[{
         text: 'Desfazer',
-        handler: () => {
+        handler: async () => {
           this.tarefas = [...this.tarefasBackup];
+          await this.storage.set("listaTarefas", this.tarefas);
         }
       }]
     });

@@ -9,8 +9,8 @@
     <ion-item-sliding>
 
       <ion-item>
-        <ion-checkbox slot="start"></ion-checkbox>
-        <ion-label>{{indice}} - {{tarefa}}</ion-label>
+        <ion-checkbox slot="start" (ionChange)="atualizarStatus(indice)" checked="{{tarefa.concluido}}"></ion-checkbox>
+        <ion-label>{{tarefa.nomeTarefa}}</ion-label>
       </ion-item>
 
       <ion-item-options side="end">
